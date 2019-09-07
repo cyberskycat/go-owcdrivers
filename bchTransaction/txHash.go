@@ -115,7 +115,7 @@ func (t Transaction) calcSegwitSerializationHashes() ([]byte, []byte, []byte) {
 	hashOutputs := []byte{}
 
 	for _, vin := range t.Vins {
-		hashPrevouts = append(hashPrevouts, vin.TxID...)
+		hashPrevouts = append(hashPrevouts, reverseBytes(vin.TxID)...)
 		hashPrevouts = append(hashPrevouts, vin.Vout...)
 
 		hashSequence = append(hashSequence, vin.sequence...)
@@ -158,7 +158,7 @@ func (t Transaction) getBchBytesForSig(lockbytes, txid, vout, sequence []byte, s
 	sigBytes = append(sigBytes, hashPrevouts...)
 	sigBytes = append(sigBytes, hashSequence...)
 
-	sigBytes = append(sigBytes, txid...)
+	sigBytes = append(sigBytes, reverseBytes(txid)...)
 	sigBytes = append(sigBytes, vout...)
 
 	scriptCode, err := genScriptBytesFromScript(lockbytes)
@@ -238,18 +238,9 @@ func (t Transaction) getBytesForSig(lockBytes, redeemBytes []byte, inType, sigTy
 	sigBytes := []byte{}
 	var err error
 	if inType == TypeP2PKH {
-		if sigType == SigHashAll {
-			t.Vins[index].scriptPub = lockBytes
-			sigBytes, err = t.encodeToBytes(SegwitON)
-
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			sigBytes, err = t.getBchBytesForSig(lockBytes, t.Vins[index].TxID, t.Vins[index].Vout, t.Vins[index].sequence, sigType, amount)
-			if err != nil {
-				return nil, err
-			}
+		sigBytes, err = t.getBchBytesForSig(lockBytes, t.Vins[index].TxID, t.Vins[index].Vout, t.Vins[index].sequence, sigType, amount)
+		if err != nil {
+			return nil, err
 		}
 	} else if inType == TypeP2WPKH {
 		if sigType == SigHashAll {
