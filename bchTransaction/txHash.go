@@ -114,11 +114,11 @@ func (t Transaction) calcSegwitSerializationHashes() ([]byte, []byte, []byte) {
 	hashSequence := []byte{}
 	hashOutputs := []byte{}
 
-	for _, vin := range t.Vins {
+	for index, vin := range t.Vins {
 		hashPrevouts = append(hashPrevouts, reverseBytes(vin.TxID)...)
 		hashPrevouts = append(hashPrevouts, vin.Vout...)
 
-		hashSequence = append(hashSequence, vin.sequence...)
+		hashSequence = append(hashSequence, uint32ToLittleEndianBytes(uint32(index))...)
 	}
 	for _, vout := range t.Vouts {
 		hashOutputs = append(hashOutputs, vout.amount...)
