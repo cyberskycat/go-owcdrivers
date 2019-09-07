@@ -53,16 +53,9 @@ func (t Transaction) encodeToBytes(SegwitON bool) ([]byte, error) {
 
 	ret := []byte{}
 
-	//1.nVersion of the transaction (4-byte little endian)
 	ret = append(ret, t.Version...)
 
 	//2.hashPrevouts (32-byte hash)
-	for _, in := range t.Vins {
-		reversTxID := in.TxID
-
-		ret = append(ret, reversTxID...)
-	}
-
 	ret = append(ret, byte(len(t.Vins)))
 	for _, in := range t.Vins {
 		inBytes, err := in.toBytes(SegwitON)
