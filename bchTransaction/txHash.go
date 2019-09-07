@@ -194,7 +194,7 @@ func (t Transaction) getBytesForSig(lockBytes, redeemBytes []byte, inType, sigTy
 				return nil, err
 			}
 		} else {
-			sigBytes, err = t.getSegwitBytesForSig(redeemBytes, t.Vins[index].TxID, t.Vins[index].Vout, t.Vins[index].sequence, sigType, amount)
+			sigBytes, err = t.getSegwitBytesForSig(lockBytes, t.Vins[index].TxID, t.Vins[index].Vout, t.Vins[index].sequence, sigType, amount)
 			if err != nil {
 				return nil, err
 			}
