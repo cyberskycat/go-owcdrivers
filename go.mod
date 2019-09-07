@@ -1,4 +1,4 @@
-module github.com/blocktree/go-owcdrivers
+module github.com/cyberskycat/go-owcdrivers
 
 go 1.12
 
