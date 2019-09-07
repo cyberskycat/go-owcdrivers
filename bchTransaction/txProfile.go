@@ -1,4 +1,4 @@
-package btcTransaction
+package bchTransaction
 
 type AddressPrefix struct {
 	P2PKHPrefix  []byte

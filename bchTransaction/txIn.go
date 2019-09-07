@@ -1,4 +1,4 @@
-package btcTransaction
+package bchTransaction
 
 import (
 	"errors"
