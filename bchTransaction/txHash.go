@@ -148,6 +148,58 @@ func genScriptCodeFromRedeemScript(redeemBytes []byte) ([]byte, error) {
 	return ret, nil
 }
 
+func (t Transaction) getBchBytesForSig(lockbytes, txid, vout, sequence []byte, sigType byte, amount uint64) ([]byte, error) {
+	sigBytes := []byte{}
+
+	sigBytes = append(sigBytes, t.Version...)
+
+	hashPrevouts, hashSequence, hashOutputs := t.calcSegwitSerializationHashes()
+
+	sigBytes = append(sigBytes, hashPrevouts...)
+	sigBytes = append(sigBytes, hashSequence...)
+
+	sigBytes = append(sigBytes, txid...)
+	sigBytes = append(sigBytes, vout...)
+
+	scriptCode, err := genScriptBytesFromScript(lockbytes)
+	if err != nil {
+		return nil, err
+	}
+
+	sigBytes = append(sigBytes, byte(len(scriptCode)))
+	sigBytes = append(sigBytes, scriptCode...)
+
+	if amount == 0 {
+		return nil, errors.New("Invalid amount of input!")
+	}
+
+	sigBytes = append(sigBytes, uint64ToLittleEndianBytes(amount)...)
+	sigBytes = append(sigBytes, sequence...)
+
+	sigBytes = append(sigBytes, hashOutputs...)
+	sigBytes = append(sigBytes, t.LockTime...)
+
+	return sigBytes, nil
+}
+
+func genScriptBytesFromScript(lockScript []byte) ([]byte, error) {
+
+	ret := []byte{}
+	if lockScript[0] == 0x00 && lockScript[1] == 0x14 {
+		ret = lockScript[2:]
+
+		if len(ret) != 0x14 {
+			return nil, errors.New("Invalid redeem script!")
+		}
+		ret = append([]byte{byte(len(ret))}, ret...)
+		ret = append([]byte{OpCodeDup, OpCodeHash160}, ret...)
+		ret = append(ret, OpCodeEqualVerify, OpCodeCheckSig)
+	} else {
+		ret = lockScript
+	}
+	return ret, nil
+}
+
 func (t Transaction) getSegwitBytesForSig(reddemBytes, txid, vout, sequence []byte, sigType byte, amount uint64) ([]byte, error) {
 	sigBytes := []byte{}
 
@@ -194,7 +246,7 @@ func (t Transaction) getBytesForSig(lockBytes, redeemBytes []byte, inType, sigTy
 				return nil, err
 			}
 		} else {
-			sigBytes, err = t.getSegwitBytesForSig(lockBytes, t.Vins[index].TxID, t.Vins[index].Vout, t.Vins[index].sequence, sigType, amount)
+			sigBytes, err = t.getBchBytesForSig(lockBytes, t.Vins[index].TxID, t.Vins[index].Vout, t.Vins[index].sequence, sigType, amount)
 			if err != nil {
 				return nil, err
 			}
