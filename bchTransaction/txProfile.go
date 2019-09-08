@@ -19,7 +19,7 @@ var (
 )
 
 const (
-	DefaultTxVersion     = uint32(2)
+	DefaultTxVersion     = uint32(1)
 	DefaultHashType      = uint32(0x1) | uint32(0x40)
 	MaxScriptElementSize = 520
 )
