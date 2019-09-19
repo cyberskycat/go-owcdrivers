@@ -53,6 +53,14 @@ var (
 	BTC_testnetPublicBIP32          = AddressType{"base58", BTCAlphabet, "doubleSHA256", "", 74, []byte{0x04, 0x35, 0x87, 0xCF}, nil}
 	BTC_testnetPrivateBIP32         = AddressType{"base58", BTCAlphabet, "doubleSHA256", "", 74, []byte{0x04, 0x35, 0x83, 0x94}, nil}
 
+	//DashCash stuff
+	DASH_mainnetAddressP2PKH         = AddressType{"base58", BTCAlphabet, "doubleSHA256", "h160", 20, []byte{0x4c}, nil}
+	DASH_testnetAddressP2PKH         = AddressType{"base58", BTCAlphabet, "doubleSHA256", "h160", 20, []byte{0x8c}, nil}
+
+	//DashCash stuff
+	DSC_mainnetAddressP2PKH         = AddressType{"base58", BTCAlphabet, "doubleSHA256", "h160", 20, []byte{0x1e}, nil}
+
+
 	//XMR stuff
 	XMR_mainnetPublicAddress           = AddressType{"XMR", XMRAlphabet, "keccak256", "", 64, []byte{0x12}, nil}
 	XMR_mainnetPublicSubAddress        = AddressType{"XMR", XMRAlphabet, "keccak256", "", 64, []byte{0x2A}, nil}

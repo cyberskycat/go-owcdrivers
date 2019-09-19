@@ -16,6 +16,8 @@ var (
 	LTCTestnetAddressPrefix = AddressPrefix{[]byte{0x6F}, []byte{0xC4}, []byte{0x3A}, "tltc"}
 	ZECMainnetAddressPrefix = AddressPrefix{[]byte{0x1C, 0xB8}, []byte{0x1C, 0xBD}, nil, ""}
 	ZECTestnetAddressPrefix = AddressPrefix{[]byte{0x1D, 0x25}, []byte{0x1C, 0xBA}, nil, ""}
+	DASHMainnetAddressPrefix = AddressPrefix{[]byte{0x4c}, nil,[]byte{0x10}, "bc"}
+	DASHTestnetAddressPrefix = AddressPrefix{[]byte{0x8c}, nil,[]byte{0x10}, "bc"}
 )
 
 const (
