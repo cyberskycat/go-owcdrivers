@@ -19,7 +19,7 @@ notice:
 func AddressCheck(addr string, symbol string) (bool, error) {
 	var err error
 	switch symbol {
-	case "BTC":
+	case "BTC","AMTC":
 		if addr[0] == '1' {
 			_, err = AddressDecode(addr, BTC_mainnetAddressP2PKH)
 			if err == nil {
@@ -70,7 +70,17 @@ func AddressCheck(addr string, symbol string) (bool, error) {
 			}
 		}
 		//other type (TODO)
-
+	case "DSC":{
+		if addr[0] == 'D'  {
+			_, err = AddressDecode(addr,DSC_mainnetAddressP2PKH)
+			if err == nil {
+				return true, err
+			} else {
+				return false, err
+			}
+		}
+		return false,nil
+	}
 	case "ZEC":
 		if addr[0] == 't' && addr[1] == '1' {
 			_, err = AddressDecode(addr, ZEC_mainnet_t_AddressP2PKH)
@@ -221,7 +231,7 @@ func AddressCheck(addr string, symbol string) (bool, error) {
 			}
 		}
 		//other type(TODO)
-	case "ETH":
+	case "ETH","VNS":
 		_, err = AddressDecode(addr, ETH_mainnetPublicAddress)
 		if err == nil {
 			return true, err
