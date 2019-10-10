@@ -79,6 +79,14 @@ func AddressCheck(addr string, symbol string) (bool, error) {
 				return false, err
 			}
 		}
+		if addr[0] == '7'  {
+			_, err = AddressDecode(addr,DSC_mainnetAddressP2SH)
+			if err == nil {
+				return true, err
+			} else {
+				return false, err
+			}
+		}
 		return false,nil
 	}
 	case "ZEC":
