@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
+	"strconv"
 	"strings"
 
 	owcrypt "github.com/blocktree/go-owcrypt"
@@ -20,6 +21,7 @@ type TxStruct struct {
 	TxnSignature       []byte
 	Account            []byte
 	Destination        []byte
+	DestinationTag      []byte
 	Memos              []byte
 }
 
@@ -40,6 +42,13 @@ func getSequenceBytes(sequence uint32) []byte {
 	enc := getEncBytes(encodings["Sequence"])
 	sequenceBytes := make([]byte, 4)
 	binary.BigEndian.PutUint32(sequenceBytes, sequence)
+	return append(enc, sequenceBytes...)
+}
+
+func getDestinationTagBytes(destinationTag uint32) []byte {
+	enc := getEncBytes(encodings["DestinationTag"])
+	sequenceBytes := make([]byte, 4)
+	binary.BigEndian.PutUint32(sequenceBytes, destinationTag)
 	return append(enc, sequenceBytes...)
 }
 
@@ -159,9 +168,14 @@ func NewTxStruct(from, pubkey string, sequence uint32, to string, amount, fee ui
 	if err != nil {
 		return nil, err
 	}
-
 	txStruct.Memos = getMemosBytes(memoType, memoData, memoFormat)
-
+	if len(memoData)>0 {
+		destinationTag, err := strconv.ParseUint(memoData, 10, 32)
+		if err != nil {
+			return nil, errors.New("parser destinationTag failed ")
+		}
+		txStruct.DestinationTag = getDestinationTagBytes(uint32(destinationTag))
+	}
 	return &txStruct, nil
 }
 
@@ -170,6 +184,7 @@ func (tx TxStruct) ToEmptyRawWiths() string {
 	ret = append(ret, tx.TransactionType...)
 	ret = append(ret, tx.Flags...)
 	ret = append(ret, tx.Sequence...)
+	ret = append(ret,tx.DestinationTag...)
 	ret = append(ret, tx.LastLedgerSequence...)
 	ret = append(ret, tx.Amount...)
 	ret = append(ret, tx.Fee...)
@@ -188,6 +203,7 @@ func (tx TxStruct) ToBytes() []byte {
 	ret = append(ret, tx.TransactionType...)
 	ret = append(ret, tx.Flags...)
 	ret = append(ret, tx.Sequence...)
+	ret = append(ret, tx.DestinationTag...)
 	ret = append(ret, tx.LastLedgerSequence...)
 	ret = append(ret, tx.Amount...)
 	ret = append(ret, tx.Fee...)

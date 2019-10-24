@@ -4,6 +4,7 @@ type enc struct {
 	typ, field byte
 }
 
+//"DestinationTag":     enc{ST_UINT32, 14},
 func getEncBytes(e enc) []byte {
 	switch {
 	case e.typ < 16 && e.field < 16:
